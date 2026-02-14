@@ -19,7 +19,7 @@ const app = express();
 const httpServer = createServer(app);
 
 // Socket.io setup
-const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:3000').split(',');
+const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:3000,https://gridwars-m8oe23z37-aman-manhars-projects.vercel.app').split(',');
 
 const io = new Server<ClientToServerEvents, ServerToClientEvents>(httpServer, {
     cors: {
