@@ -1,0 +1,435 @@
+@import "tailwindcss";
+
+/* ============================================
+   NEON DOMINION — Premium Design System v2.0
+   ============================================
+   4-Color System:
+   - Accent: #00F5D4 (cyan) — system, positive
+   - Danger: #FF3B5C (coral red) — urgency, warnings
+   - Neutral: #4A5578 (steel) — labels, secondary
+   - Void: #030508 (near-black) — background
+   ============================================ */
+
+:root {
+  /* Core 4-color palette */
+  --accent: #00F5D4;
+  --accent-dim: rgba(0, 245, 212, 0.15);
+  --danger: #FF3B5C;
+  --danger-dim: rgba(255, 59, 92, 0.15);
+  --neutral: #4A5578;
+  --neutral-dim: #2D3548;
+
+  /* Background layers */
+  --bg-void: #030508;
+  --bg-surface: rgba(8, 14, 28, 0.85);
+  --bg-surface-light: rgba(8, 14, 28, 0.6);
+
+  /* Glass system */
+  --glass-bg: rgba(6, 12, 24, 0.75);
+  --glass-border: rgba(0, 245, 212, 0.06);
+  --glass-shadow: rgba(0, 0, 0, 0.5);
+
+  /* Text hierarchy */
+  --text-bright: #E8ECF4;
+  --text-dim: #6B7A99;
+  --text-muted: #3D4A66;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--bg-void);
+  color: var(--text-bright);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 3px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 245, 212, 0.12);
+  border-radius: 4px;
+}
+
+::selection {
+  background: rgba(0, 245, 212, 0.2);
+  color: #fff;
+}
+
+canvas {
+  image-rendering: pixelated;
+}
+
+/* ============================================
+   Viewport Neon Frame
+   ============================================ */
+
+.viewport-frame {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+  border: 1px solid rgba(0, 245, 212, 0.08);
+  border-radius: 4px;
+  box-shadow: inset 0 0 40px rgba(0, 245, 212, 0.02);
+  transition: border-color 0.5s ease, box-shadow 0.5s ease;
+}
+
+/* Urgency border — activated when timer < 20s */
+.viewport-frame.timer-urgent {
+  border-color: rgba(255, 59, 92, 0.2);
+  box-shadow: inset 0 0 80px rgba(255, 59, 92, 0.04);
+  animation: urgency-border-pulse 1.5s ease-in-out infinite;
+}
+
+/* Corner accents */
+.viewport-frame::before,
+.viewport-frame::after {
+  content: '';
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  border-color: rgba(0, 245, 212, 0.18);
+  border-style: solid;
+  transition: border-color 0.5s ease;
+}
+
+.viewport-frame.timer-urgent::before,
+.viewport-frame.timer-urgent::after {
+  border-color: rgba(255, 59, 92, 0.25);
+}
+
+.viewport-frame::before {
+  top: 3px;
+  left: 3px;
+  border-width: 1.5px 0 0 1.5px;
+  border-radius: 3px 0 0 0;
+}
+
+.viewport-frame::after {
+  bottom: 3px;
+  right: 3px;
+  border-width: 0 1.5px 1.5px 0;
+  border-radius: 0 0 3px 0;
+}
+
+/* ============================================
+   Glass Panels
+   ============================================ */
+
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px) saturate(1.1);
+  -webkit-backdrop-filter: blur(20px) saturate(1.1);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  box-shadow:
+    0 4px 24px var(--glass-shadow),
+    0 0 1px rgba(255, 255, 255, 0.03) inset;
+}
+
+.glass-hud {
+  background: rgba(6, 12, 24, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 245, 212, 0.05);
+  border-radius: 10px;
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.35);
+}
+
+/* ============================================
+   Animations — Core
+   ============================================ */
+
+@keyframes pulse-glow {
+
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes float-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-float-in {
+  animation: float-in 0.25s ease-out;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+/* ============================================
+   Animations — Competitive Feedback
+   ============================================ */
+
+/* Score pop on change */
+@keyframes score-pop {
+  0% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+
+  30% {
+    transform: scale(1.18);
+    filter: brightness(1.4);
+  }
+
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+}
+
+.score-pop {
+  animation: score-pop 300ms ease-out;
+}
+
+/* Score glow ring */
+@keyframes score-glow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 245, 212, 0.3);
+  }
+
+  70% {
+    box-shadow: 0 0 0 8px rgba(0, 245, 212, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 245, 212, 0);
+  }
+}
+
+.score-glow {
+  animation: score-glow 400ms ease-out;
+}
+
+/* Timer urgency pulse */
+@keyframes urgency-pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.6;
+  }
+}
+
+.timer-urgent-text {
+  color: var(--danger) !important;
+  animation: urgency-pulse 1s ease-in-out infinite;
+  text-shadow: 0 0 12px rgba(255, 59, 92, 0.4);
+}
+
+/* Timer critical flash (<10s) */
+@keyframes critical-flash {
+
+  0%,
+  100% {
+    color: var(--danger);
+  }
+
+  50% {
+    color: #fff;
+  }
+}
+
+.timer-critical-text {
+  animation: critical-flash 0.6s ease-in-out infinite;
+  text-shadow: 0 0 16px rgba(255, 59, 92, 0.5);
+}
+
+/* Urgency border pulse */
+@keyframes urgency-border-pulse {
+
+  0%,
+  100% {
+    border-color: rgba(255, 59, 92, 0.15);
+  }
+
+  50% {
+    border-color: rgba(255, 59, 92, 0.3);
+  }
+}
+
+/* ============================================
+   Low Energy Vignette Overlay
+   ============================================ */
+
+.low-energy-vignette {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 45;
+  background: radial-gradient(ellipse at center,
+      transparent 50%,
+      rgba(255, 59, 92, 0.06) 80%,
+      rgba(255, 59, 92, 0.12) 100%);
+  animation: vignette-breathe 2s ease-in-out infinite;
+  transition: opacity 0.5s ease;
+}
+
+@keyframes vignette-breathe {
+
+  0%,
+  100% {
+    opacity: 0.7;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+/* ============================================
+   Energy bar shimmer
+   ============================================ */
+
+.energy-fill {
+  position: relative;
+  overflow: hidden;
+}
+
+.energy-fill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+  background-size: 200% 100%;
+  animation: shimmer 2.5s ease-in-out infinite;
+}
+
+/* ============================================
+   Rank badges
+   ============================================ */
+
+.rank-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+}
+
+.rank-bronze {
+  background: rgba(205, 127, 50, 0.12);
+  color: #CD7F32;
+}
+
+.rank-silver {
+  background: rgba(192, 192, 192, 0.1);
+  color: #C0C0C0;
+}
+
+.rank-gold {
+  background: rgba(255, 215, 0, 0.1);
+  color: #FFD700;
+}
+
+.rank-diamond {
+  background: rgba(185, 242, 255, 0.08);
+  color: #B9F2FF;
+}
+
+.rank-neon {
+  background: rgba(0, 255, 136, 0.08);
+  color: #00FF88;
+}
+
+/* ============================================
+   Mono font helper
+   ============================================ */
+
+.font-mono-game {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+/* ============================================
+   Leaderboard toggle
+   ============================================ */
+
+.leaderboard-body {
+  overflow: hidden;
+  transition: max-height 0.25s ease-in-out, opacity 0.2s ease;
+}
+
+.leaderboard-body.collapsed {
+  max-height: 0;
+  opacity: 0;
+}
+
+.leaderboard-body.expanded {
+  max-height: 300px;
+  opacity: 1;
+}
+
+.leaderboard-toggle {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  transition: color 0.15s ease;
+}
+
+.leaderboard-toggle:hover {
+  color: var(--accent);
+}
+
+/* ============================================
+   Utility: Fade-out after delay
+   ============================================ */
+
+@keyframes fade-out-delayed {
+
+  0%,
+  70% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
