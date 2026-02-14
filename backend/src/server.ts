@@ -19,10 +19,13 @@ const app = express();
 const httpServer = createServer(app);
 
 // Socket.io setup
+const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:3000').split(',');
+
 const io = new Server<ClientToServerEvents, ServerToClientEvents>(httpServer, {
     cors: {
-        origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+        origin: allowedOrigins,
         methods: ['GET', 'POST'],
+        credentials: true
     },
     pingTimeout: 60000,
     pingInterval: 25000,
@@ -30,7 +33,8 @@ const io = new Server<ClientToServerEvents, ServerToClientEvents>(httpServer, {
 
 // Middleware
 app.use(cors({
-    origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+    origin: allowedOrigins,
+    credentials: true
 }));
 app.use(express.json());
 
