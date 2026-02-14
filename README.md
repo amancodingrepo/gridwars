@@ -1,202 +1,106 @@
-# Real-Time Shared Grid
+# ⚡ GridWars — Real-Time Multiplayer Territory Control
 
-A production-ready collaborative grid application where multiple users can simultaneously claim blocks in real-time.
+A real-time multiplayer grid game where players compete to capture and control territory on a shared board. Built with Next.js, Socket.io, and PostgreSQL.
 
-## 🚀 Features
+## 🎮 Gameplay
 
-- **Real-time multiplayer** - Hundreds of concurrent users supported
-- **Instant synchronization** - See others' captures in <100ms
-- **Conflict resolution** - Server-authoritative with cooldown system
-- **Live leaderboard** - Real-time rankings with animations
-- **Activity feed** - Watch the grid come alive
-- **Responsive design** - Works on desktop and mobile
-- **Graceful reconnection** - Automatic state sync after disconnect
+- Join the arena and claim tiles by clicking on the grid
+- Every capture costs energy — manage it wisely
+- Compete against other players in timed rounds
+- Dominate the leaderboard before the round ends
 
 ## 🛠️ Tech Stack
 
-### Frontend
-- **Next.js 15** - React framework with App Router
-- **TypeScript** - Type-safe development
-- **Tailwind CSS** - Utility-first styling
-- **Framer Motion** - Smooth animations
-- **Socket.io Client** - Real-time WebSocket communication
+| Layer | Technology |
+|-------|-----------|
+| **Frontend** | Next.js 16, React 19, Tailwind CSS 4, Framer Motion |
+| **Backend** | Node.js, Express, Socket.io, TypeScript |
+| **Database** | PostgreSQL (Neon) |
+| **Real-Time** | WebSocket via Socket.io |
 
-### Backend
-- **Node.js** - JavaScript runtime
-- **Express** - Web framework
-- **Socket.io** - WebSocket server with fallbacks
-- **TypeScript** - Type-safe backend code
-- **In-memory state** - Lightning-fast grid operations
-
-## 📦 Installation
+## 📦 Getting Started
 
 ### Prerequisites
-- Node.js 18+ installed
-- npm or yarn package manager
+- Node.js 18+
+- PostgreSQL database (or a [Neon](https://neon.tech) account)
 
-### 1. Clone the repository
+### 1. Clone & Install
+
 ```bash
-git clone <your-repo-url>
-cd game
+git clone https://github.com/amancodingrepo/gridwars.git
+cd gridwars
 ```
 
-### 2. Install backend dependencies
 ```bash
+# Backend
 cd backend
 npm install
-```
 
-### 3. Install frontend dependencies
-```bash
+# Frontend
 cd ../app
 npm install
 ```
 
-### 4. Configure environment variables
+### 2. Configure Environment
 
-**Backend** (`backend/.env`):
+**Backend** — create `backend/.env`:
 ```env
 NODE_ENV=development
 PORT=3001
 CORS_ORIGIN=http://localhost:3000
+DATABASE_URL=postgresql://user:password@host/dbname
 GRID_WIDTH=100
 GRID_HEIGHT=100
 CAPTURE_COOLDOWN_MS=5000
+MAX_CAPTURES_PER_SECOND=10
+RATE_LIMIT_WINDOW_MS=1000
+SNAPSHOT_INTERVAL_MS=30000
 ```
 
-**Frontend** (`app/.env.local`):
+**Frontend** — create `app/.env.local`:
 ```env
 NEXT_PUBLIC_WS_URL=http://localhost:3001
+NEXT_PUBLIC_API_URL=http://localhost:3001/api
 NEXT_PUBLIC_GRID_SIZE=100
 ```
 
-## 🎮 Running the Application
+### 3. Run
 
-### Development Mode
-
-**Start the backend** (Terminal 1):
 ```bash
+# Terminal 1 — Backend
 cd backend
 npm run dev
-```
 
-**Start the frontend** (Terminal 2):
-```bash
+# Terminal 2 — Frontend
 cd app
 npm run dev
 ```
 
-Open your browser to **http://localhost:3000**
-
-### Production Build
-
-**Backend**:
-```bash
-cd backend
-npm run build
-npm start
-```
-
-**Frontend**:
-```bash
-cd app
-npm run build
-npm start
-```
+Open **http://localhost:3000**
 
 ## 🏗️ Architecture
 
-### In-Memory Grid State
-- **Performance**: O(1) cell access using Map data structure
-- **Scalability**: Handles 500+ concurrent users per instance
-- **Persistence**: Periodic snapshots (every 30s) + graceful shutdown
-
-### Authoritative Server Pattern
-- Client sends capture intent
-- Server validates and applies rules
-- Server broadcasts confirmed updates
-- Prevents cheating and ensures consistency
-
-### Conflict Resolution
-```typescript
-// Cooldown-based protection
-if (now - cell.lastCapturedAt < cooldownMs) {
-  reject capture // Cell on cooldown
-} else {
-  accept capture // First request wins
-}
+```
+Next.js Frontend ←→ Socket.io ←→ Node.js Backend ←→ PostgreSQL
+                                        ↕
+                                 In-Memory Grid State
 ```
 
-### Real-Time Communication
-- **WebSocket**: Primary transport for instant updates
-- **Fallbacks**: Long-polling if WebSocket unavailable
-- **Reconnection**: Automatic with exponential backoff
-- **State sync**: Full grid sync on reconnection
+- **Server-authoritative** — all game logic runs on the backend
+- **In-memory grid** — O(1) cell access for real-time performance
+- **Periodic snapshots** — grid state persisted to PostgreSQL every 30s
+- **Conflict resolution** — cooldown-based capture protection
 
-## 🎯 How It Works
+## ✨ Features
 
-1. **User connects** → Assigned unique ID, username, and color
-2. **User clicks cell** → Request sent to server via WebSocket
-3. **Server validates** → Checks cooldown, rate limits, ownership
-4. **Server updates** → Modifies in-memory grid state
-5. **Server broadcasts** → All connected clients receive update
-6. **UI updates** → Grid cell changes color instantly
+- ⚡ Real-time multiplayer with <100ms latency
+- 🏆 Live leaderboard with rank progression
+- 🔋 Energy system with regeneration
+- ⏱️ Timed rounds with game-over summary
+- 🛡️ Rate limiting & anti-spam protection
+- 🔄 Automatic reconnection with state sync
+- 🎨 Cyberpunk-themed UI with glassmorphism
 
-## 📊 Performance Metrics
+## 📄 License
 
-- **Latency**: <100ms average for cell updates
-- **Capacity**: 500+ concurrent users per server instance
-- **Throughput**: 1000+ captures per second
-- **Message delivery**: 99.9% success rate
-
-## 🔐 Security Features
-
-- **Rate limiting**: 10 captures per second per user
-- **Anti-spam**: Sliding window algorithm
-- **Server-authoritative**: All game logic on backend
-- **Input validation**: Sanitized cell IDs and usernames
-
-## 🚀 Deployment
-
-### Recommended Platforms
-
-**Frontend** → Vercel (automatic Next.js deployment)
-**Backend** → Railway.app or Fly.io (WebSocket support)
-
-### Environment Variables
-Set all .env variables in your deployment platform
-
-### Docker Support (Coming Soon)
-```bash
-docker-compose up
-```
-
-## 📈 Future Enhancements
-
-- [ ] User authentication and persistent accounts
-- [ ] Custom grid sizes and private rooms
-- [ ] Territory control and team modes
-- [ ] Power-ups and special tiles
-- [ ] Horizontal scaling with Redis
-- [ ] Database persistence (PostgreSQL)
-- [ ] Analytics dashboard
-
-## 🎨 UI/UX Highlights
-
-- **Glassmorphism** - Modern blur effects
-- **Micro-interactions** - Hover animations and glow effects
-- **Live updates** - Animated leaderboard and activity feed
-- **Responsive grid** - Adapts to screen size
-- **Color coding** - Each user gets a unique vibrant color
-
-## 📝 License
-
-MIT License - Feel free to use for learning or commercial projects
-
-## 🤝 Contributing
-
-Contributions welcome! Please open an issue or submit a pull request.
-
----
-
-**Built with ❤️ using Next.js, Socket.io, and TypeScript**
+MIT
