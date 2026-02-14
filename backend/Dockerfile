@@ -8,7 +8,7 @@ RUN npm ci
 
 # Copy source and build TypeScript
 COPY . .
-RUN npm run build
+RUN npm run build && cp -r src/db/*.sql dist/db/
 
 # --- Production stage ---
 FROM node:20-alpine
